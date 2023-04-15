@@ -23,8 +23,12 @@ function userInput(){
         },
       ]).then(function (answers) {
         if (answers.start === 'View all Departments') {
-          getAllDepartments(); // Call getAllDepartments function here
+          getAllDepartments(); 
           console.log('You chose to get all Departments');
+        }
+        if (answers.start === 'View all Roles') {
+            getAllRoles()
+            console.log('You chose to get all Roles')
         }
       });
 }
@@ -39,6 +43,14 @@ function getAllDepartments() {
     console.table(results);
     userInput()
   });
+}
+function getAllRoles(){
+    connection.query('SELECT * FROM roles_view;', function (err, results) {
+        if (err) throw err;
+        // Log departments data using console.table
+        console.table(results);
+        userInput()
+      }); 
 }
 
 userInput()
