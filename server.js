@@ -25,10 +25,17 @@ function userInput(){
         if (answers.start === 'View all Departments') {
           getAllDepartments(); 
           console.log('You chose to get all Departments');
+          console.log()
         }
         if (answers.start === 'View all Roles') {
             getAllRoles()
             console.log('You chose to get all Roles')
+            console.log()
+        }
+        if (answers.start === 'View all Employees') {
+            getAllEmployees()
+            console.log('You chose to get all Employees')
+            console.log()
         }
       });
 }
@@ -46,6 +53,15 @@ function getAllDepartments() {
 }
 function getAllRoles(){
     connection.query('SELECT * FROM roles_view;', function (err, results) {
+        if (err) throw err;
+        // Log departments data using console.table
+        console.table(results);
+        userInput()
+      }); 
+}
+
+function getAllEmployees(){
+    connection.query('SELECT * FROM employee_view;', function (err, results) {
         if (err) throw err;
         // Log departments data using console.table
         console.table(results);
