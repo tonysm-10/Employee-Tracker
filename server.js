@@ -153,54 +153,56 @@ function addRole() {
   }
 
 
-function addEmployee() {
-  // Fetch roles and managers from the role table
-  connection.query('SELECT id, title FROM role', function (err, roleResults) {
-    if (err) throw err;
-    const roleChoices = roleResults.map(role => ({ value: role.id, name: role.title }));
-
-    connection.query('SELECT id, first_name, last_name FROM employee', function (err, managerResults) {
+  function addEmployee() {
+    // Fetch roles and managers from the role table
+    connection.query('SELECT id, title FROM role', function (err, roleResults) {
       if (err) throw err;
-      const managerChoices = managerResults.map(manager => ({ value: manager.id, name: `${manager.first_name} ${manager.last_name}` }));
-
-      inquirer.prompt([
-        {
-          type: "input",
-          name: "firstName",
-          message: "What is the employee's first name?"
-        },
-        {
-          type: "input",
-          name: "lastName",
-          message: "What is the employee's last name?"
-        },
-        {
-          type: "list",
-          name: "roleId",
-          message: "What is the employee's role?",
-          choices: roleChoices
-        },
-        {
-          type: "list",
-          name: "managerId",
-          message: "Who is the employee's manager?",
-          choices: managerChoices
-        }
-      ]).then((answers)=>{
-        const first_name = answers.firstName;
-        const last_name = answers.lastName;
-        const role_id = answers.roleId; // Changed from role to roleId
-        const manager_id = answers.managerId; // Changed from manager to managerId
-
-        connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [first_name, last_name, role_id, manager_id], function (err, results){
-          if (err) throw err;
-          console.log("Employee added successfully!");
-          userInput()
+      const roleChoices = roleResults.map(role => ({ value: role.id, name: role.title }));
+  
+      connection.query('SELECT id, first_name, last_name FROM employee', function (err, managerResults) {
+        if (err) throw err;
+        // Add "None" option to managerChoices array
+        const managerChoices = [{ value: null, name: "None" }, ...managerResults.map(manager => ({ value: manager.id, name: `${manager.first_name} ${manager.last_name}` }))];
+  
+        inquirer.prompt([
+          {
+            type: "input",
+            name: "firstName",
+            message: "What is the employee's first name?"
+          },
+          {
+            type: "input",
+            name: "lastName",
+            message: "What is the employee's last name?"
+          },
+          {
+            type: "list",
+            name: "roleId",
+            message: "What is the employee's role?",
+            choices: roleChoices
+          },
+          {
+            type: "list",
+            name: "managerId",
+            message: "Who is the employee's manager?",
+            choices: managerChoices
+          }
+        ]).then((answers)=>{
+          const first_name = answers.firstName;
+          const last_name = answers.lastName;
+          const role_id = answers.roleId;
+          const manager_id = answers.managerId;
+  
+          connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [first_name, last_name, role_id, manager_id], function (err, results){
+            if (err) throw err;
+            console.log("Employee added successfully!");
+            userInput()
+          });
         });
       });
     });
-  });
-}
+  }
+  
 
 function updateEmployeeRole() {
   // Fetch employees from the employee table
